@@ -76,7 +76,6 @@ class ToDoListViewController: UITableViewController {
         
         var textField = UITextField()
         
-        
         let alert = UIAlertController(title: "Adicione novo item", message: "", preferredStyle: .alert)
         let actionButton = UIAlertAction(title: "Adicionar item", style: .default) { action in
             
@@ -95,14 +94,11 @@ class ToDoListViewController: UITableViewController {
             textField = alertTextField
         }
         
-         
         
         alert.addAction(actionButton)
         present(alert, animated: true, completion: nil)
         
     }
     
-
-
 }
 
