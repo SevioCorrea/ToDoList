@@ -17,30 +17,7 @@ class ToDoListViewController: UITableViewController {
         super.viewDidLoad()
         
         
-        
-        let newItem = Item()
-        newItem.title = "Item 1"
-        itemArray.append(newItem)
-        
-        let newItem2 = Item()
-        newItem2.title = "Item 2"
-        itemArray.append(newItem2)
-        
-        let newItem3 = Item()
-        newItem3.title = "Item 3"
-        itemArray.append(newItem3)
-        
-        let newItem4 = Item()
-        newItem4.title = "Item 4"
-        itemArray.append(newItem4)
-        
-        let newItem5 = Item()
-        newItem5.title = "Item 5"
-        itemArray.append(newItem5)
-        
-//        if let items = defaults.array(forKey: "ToDoListArray") as? [Item] {
-//            itemArray = items
-//        }
+        loadItems()
     }
     
     // MARK: - TableView Datasource
@@ -105,6 +82,19 @@ class ToDoListViewController: UITableViewController {
         } catch {
             print("Error encoding data Array, \(error)")
         }
+        self.tableView.reloadData()
+    }
+    
+    func loadItems() {
+        if let data = try? Data(contentsOf: dataFilePath!) {
+            let decoder = PropertyListDecoder()
+            do {
+                itemArray = try decoder.decode([Item].self, from: data)
+            } catch {
+                print("Error decoding item Array, \(error)")
+            }
+        }
+        
     }
     
 }
