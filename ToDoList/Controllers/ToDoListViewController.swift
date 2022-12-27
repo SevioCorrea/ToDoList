@@ -12,7 +12,6 @@ class ToDoListViewController: UITableViewController {
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var itemArray = [Item]()
-    //    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     
     
     override func viewDidLoad() {
@@ -90,8 +89,6 @@ class ToDoListViewController: UITableViewController {
     func saveItems() {
         
         do {
-            
-            
             try context.save()
         } catch {
             print("Error saving Context. \(error)")
@@ -99,9 +96,9 @@ class ToDoListViewController: UITableViewController {
         self.tableView.reloadData()
     }
     
-    func loadItems() {
+    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest()) {
         
-        let request: NSFetchRequest<Item> = Item.fetchRequest()
+//        let request: NSFetchRequest<Item> = Item.fetchRequest()
         do {
             itemArray = try context.fetch(request)
         } catch {
@@ -112,3 +109,36 @@ class ToDoListViewController: UITableViewController {
     
 }
 
+//MARK: - Search bar methods
+extension ToDoListViewController: UISearchBarDelegate {
+    
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        let request: NSFetchRequest<Item> = Item.fetchRequest()
+        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        
+        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        
+        loadItems(with: request)
+        
+//        do {
+//            itemArray = try context.fetch(request)
+//        } catch {
+//            print("Error fetching Data from context. \(error)")
+//        }
+        
+        tableView.reloadData()
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text!.isEmpty {
+            loadItems()
+            
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+                searchBar.resignFirstResponder()
+                
+            }
+        }
+    }
+}
